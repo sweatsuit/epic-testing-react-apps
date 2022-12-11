@@ -5,6 +5,8 @@ import * as React from 'react'
 import {act} from 'react-dom/test-utils'
 import {createRoot} from 'react-dom/client'
 import Counter from '../../components/counter'
+import {doc} from 'prettier'
+import {render} from '@testing-library/react'
 
 // NOTE: this is a new requirement in React 18
 // https://reactjs.org/blog/2022/03/08/react-18-upgrade-guide.html#configuring-your-testing-environment
@@ -30,6 +32,29 @@ test('counter increments and decrements when the buttons are clicked', () => {
   //
   // 🐨 cleanup by removing the div from the page (💰 div.remove())
   // 🦉 If you don't cleanup, then it could impact other tests and/or cause a memory leak
+  const container = document.createElement('div')
+  document.body.append(container)
+  const root = createRoot(container)
+  act(() => {
+    root.render(<Counter />)
+  })
+
+  const [decrement, increment] = container.querySelectorAll('button')
+  const message = container.firstChild.querySelector('div')
+
+  expect(message.textContent).toBe('Current count: 0')
+
+  act(() => {
+    decrement.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+  })
+  expect(message.textContent).toBe('Current count: -1')
+
+  act(() => {
+    increment.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+  })
+  expect(message.textContent).toBe('Current count: 0')
+
+  container.remove()
 })
 
 /* eslint no-unused-vars:0 */
