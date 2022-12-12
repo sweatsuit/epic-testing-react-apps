@@ -81,4 +81,5 @@ test('request fails', async () => {
   await userEvent.click(screen.getByRole('button', {name: /submit/i}))
   await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i))
   expect(screen.getByRole('alert')).toHaveTextContent(errorText)
+  server.resetHandlers()
 })
